@@ -1,0 +1,76 @@
+# -----------------------------
+# Python standard ignores
+# -----------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+*.sqlite
+*.log
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Jupyter notebooks checkpoints (if you use any)
+.ipynb_checkpoints/
+
+# -----------------------------
+# Airflow-specific ignores
+# -----------------------------
+# Local Airflow metadata DB
+airflow.db
+airflow.sqlite
+
+# Airflow logs (very large)
+logs/
+logs/*
+
+# Airflow temp files
+*.pid
+*.err
+
+# -----------------------------
+# Environment & secrets
+# -----------------------------
+.env
+.env.*
+*.env
+
+# -----------------------------
+# Local data outputs
+# (KEEP raw properties.csv under version control)
+# -----------------------------
+data/clean_properties.csv
+data/*.tmp
+data/*.bak
+
+# If you ever download/expand data locally:
+data/downloads/
+
+# -----------------------------
+# OS files
+# -----------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -----------------------------
+# Build artifacts
+# -----------------------------
+dist/
+build/
+
+# -----------------------------
+# Docker
+# -----------------------------
+*.tar
+*.gz
+
+
+# Local debugging script
+local_run_etl.py
