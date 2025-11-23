@@ -7,12 +7,9 @@ services:
     dockerfilePath: ./Dockerfile
 
     dockerCommand: >
-      set -e
-      # Build Airflow connection string from Neon env vars
+      set -e;
       export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="postgresql+psycopg2://${NEON_DB_USER}:${NEON_DB_PASSWORD}@${NEON_DB_HOST}:${NEON_DB_PORT}/${NEON_DB_NAME}?sslmode=${NEON_DB_SSLMODE}";
-      # Create / migrate metadata DB (handles initialisation too)
       airflow db migrate;
-      # Create admin user if it doesn't exist (ignore error if it does)
       airflow users create \
         --username "${_AIRFLOW_WWW_USER_USERNAME:-airflow}" \
         --password "${_AIRFLOW_WWW_USER_PASSWORD:-airflow}" \
@@ -20,7 +17,6 @@ services:
         --lastname User \
         --role Admin \
         --email admin@example.com || true;
-      # Start scheduler in background, webserver in foreground (for Render)
       airflow scheduler &
       exec airflow webserver --port $PORT
 
