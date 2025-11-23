@@ -24,8 +24,5 @@ COPY . /opt/airflow/
 # Airflow looks at /opt/airflow/dags by default
 ENV AIRFLOW_HOME=/opt/airflow
 
-# Default command: start webserver + scheduler
-CMD ["bash", "-c", "airflow db upgrade && airflow users create \
-    --username admin --firstname Air --lastname Flow \
-    --role Admin --email admin@example.com --password admin || true && \
-    airflow webserver & airflow scheduler"]
+# Let Render's dockerCommand control how Airflow starts
+CMD ["bash", "-lc", "airflow version"]

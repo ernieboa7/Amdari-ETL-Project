@@ -1,41 +1,50 @@
 services:
   - type: web
-    name: amdari-etl-airflow           # you can change this name if you like
-    env: docker
-    plan: starter                      # or "free" / whatever plan you use
+    name: amdari-etl-airflow
+    runtime: docker             # or env: docker (runtime is the newer field)
+    plan: free                  # you're on free tier
     autoDeploy: true
     dockerfilePath: ./Dockerfile
 
-    startCommand: >
-      bash -c "
-      export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=\"postgresql+psycopg2://${NEON_DB_USER}:${NEON_DB_PASSWORD}@${NEON_DB_HOST}:${NEON_DB_PORT}/${NEON_DB_NAME}?sslmode=${NEON_DB_SSLMODE}\" &&
-      airflow db init &&
-      airflow users create
-        --username \"${_AIRFLOW_WWW_USER_USERNAME:-airflow}\"
-        --password \"${_AIRFLOW_WWW_USER_PASSWORD:-airflow}\"
-        --firstname Admin
-        --lastname User
-        --role Admin
-        --email admin@example.com || true &&
-      airflow webserver --port \$PORT
-      "
+    dockerCommand: >
+      bash -lc '
+        # Build Airflow connection string from Neon env vars
+        export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="postgresql+psycopg2://${NEON_DB_USER}:${NEON_DB_PASSWORD}@${NEON_DB_HOST}:${NEON_DB_PORT}/${NEON_DB_NAME}?sslmode=${NEON_DB_SSLMODE}";
+
+        # Create / migrate metadata DB (handles initialisation too)
+        airflow db migrate;
+
+        # Create admin user if it doesn't exist (ignore error if it does)
+        airflow users create \
+          --username "${_AIRFLOW_WWW_USER_USERNAME:-airflow}" \
+          --password "${_AIRFLOW_WWW_USER_PASSWORD:-airflow}" \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com || true;
+
+        # Start scheduler in background, webserver in foreground (for Render)
+        airflow scheduler &
+
+        airflow webserver --port $PORT
+      '
 
     envVars:
       # Airflow core settings
       - key: AIRFLOW__CORE__FERNET_KEY
-        sync: false
+        sync: false              # set in Render dashboard
       - key: AIRFLOW__CORE__LOAD_EXAMPLES
         value: "False"
       - key: AIRFLOW__WEBSERVER__RBAC
         value: "True"
 
-      # Web UI user credentials (password kept in Render as secret)
+      # Web UI user credentials
       - key: _AIRFLOW_WWW_USER_USERNAME
         value: airflow
       - key: _AIRFLOW_WWW_USER_PASSWORD
-        sync: false
+        sync: false              # secret in Render
 
-      # Neon connection pieces – these should already be set in Render
+      # Neon connection pieces – set actual values in Render
       - key: NEON_DB_HOST
         sync: false
       - key: NEON_DB_PORT
