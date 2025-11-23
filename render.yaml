@@ -1,14 +1,13 @@
 services:
   - type: web
     name: amdari-etl-airflow
-    runtime: docker             # or env: docker (runtime is the newer field)
-    plan: free                  # you're on free tier
+    runtime: docker
+    plan: free
     autoDeploy: true
     dockerfilePath: ./Dockerfile
 
-    
-
     dockerCommand: >
+      set -e
       # Build Airflow connection string from Neon env vars
       export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="postgresql+psycopg2://${NEON_DB_USER}:${NEON_DB_PASSWORD}@${NEON_DB_HOST}:${NEON_DB_PORT}/${NEON_DB_NAME}?sslmode=${NEON_DB_SSLMODE}";
       # Create / migrate metadata DB (handles initialisation too)
@@ -23,8 +22,7 @@ services:
         --email admin@example.com || true;
       # Start scheduler in background, webserver in foreground (for Render)
       airflow scheduler &
-      airflow webserver --port $PORT
-
+      exec airflow webserver --port $PORT
 
     envVars:
       # Airflow core settings
