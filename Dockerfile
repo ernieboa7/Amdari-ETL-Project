@@ -13,13 +13,12 @@ RUN chmod 755 /opt/airflow/render-start.sh \
 # Switch to airflow user (required by base image)
 USER airflow
 
+# Set Airflow home
 ENV AIRFLOW_HOME=/opt/airflow
 
 # Install your Python deps (Airflow itself is already in the base image)
 RUN pip install --no-cache-dir -r /opt/airflow/requirements.txt
 
-# IMPORTANT: override the base entrypoint so it does NOT call `airflow` directly
+# Use dumb-init as PID 1, then run our script
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-
-# Run our start script via bash
-CMD ["bash", "/opt/airflow/render-start.sh"]
+CMD ["/opt/airflow/render-start.sh"]

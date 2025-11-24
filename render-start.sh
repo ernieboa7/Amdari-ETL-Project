@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -e
 
 export AIRFLOW_HOME=/opt/airflow
 
@@ -12,9 +12,10 @@ export AIRFLOW__CORE__PARALLELISM="${AIRFLOW__CORE__PARALLELISM:-2}"
 export AIRFLOW__CORE__DAG_CONCURRENCY="${AIRFLOW__CORE__DAG_CONCURRENCY:-2}"
 export AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG="${AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG:-1}"
 export AIRFLOW__WEBSERVER__WORKERS="${AIRFLOW__WEBSERVER__WORKERS:-1}"
+export AIRFLOW__CORE__LOAD_EXAMPLES="${AIRFLOW__CORE__LOAD_EXAMPLES:-False}"
 
 echo "Running Airflow DB migrations..."
-airflow db migrate
+airflow db upgrade
 
 echo "Creating default admin user (if needed)..."
 airflow users create \
@@ -26,11 +27,11 @@ airflow users create \
   --email admin@example.com || true
 
 # Render injects PORT; use that so Render can detect the port correctly
-
 PORT="${PORT:-10000}"
 
-echo "Starting Airflow webserver on port ${PORT}..."
+echo "Starting Airflow webserver in DEBUG mode on port ${PORT}..."
 exec airflow webserver \
+  --debug \
   --port "${PORT}" \
   --hostname 0.0.0.0 \
   --access-logfile - \
