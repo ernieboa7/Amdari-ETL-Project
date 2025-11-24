@@ -1,4 +1,5 @@
 services:
+  # 1) Airflow Web UI
   - type: web
     name: amdari-etl-airflow
     runtime: docker
@@ -6,35 +7,73 @@ services:
     autoDeploy: true
     dockerfilePath: ./Dockerfile
 
-    # Just call your start script
-    dockerCommand: /opt/airflow/render-start.sh
+    dockerCommand: /opt/airflow/render-start-web.sh
 
     envVars:
       # Airflow core settings
       - key: AIRFLOW__CORE__FERNET_KEY
-        sync: false              # set secret value in Render dashboard
+        sync: false          # set secret value in Render dashboard
       - key: AIRFLOW__CORE__LOAD_EXAMPLES
         value: "False"
-      - key: AIRFLOW__WEBSERVER__RBAC
-        value: "True"
 
-      # Light concurrency (also defaulted in render-start.sh)
-      - key: AIRFLOW__WEBSERVER__WORKERS
-        value: "1"
+      # Light concurrency
       - key: AIRFLOW__CORE__PARALLELISM
         value: "2"
       - key: AIRFLOW__CORE__DAG_CONCURRENCY
         value: "2"
       - key: AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG
         value: "1"
+      - key: AIRFLOW__CORE__EXECUTOR
+        value: "SequentialExecutor"
+      - key: AIRFLOW__WEBSERVER__WORKERS
+        value: "1"
 
       # Web UI user credentials
       - key: _AIRFLOW_WWW_USER_USERNAME
-        value: airflow
+        value: "airflow"
       - key: _AIRFLOW_WWW_USER_PASSWORD
-        sync: false              # set password in Render dashboard
+        sync: false          # set password in Render dashboard
 
-      # Neon connection info (set real secrets in Render dashboard)
+      # Neon connection info (same for both services)
+      - key: NEON_DB_HOST
+        sync: false
+      - key: NEON_DB_PORT
+        value: "5432"
+      - key: NEON_DB_NAME
+        sync: false
+      - key: NEON_DB_USER
+        sync: false
+      - key: NEON_DB_PASSWORD
+        sync: false
+      - key: NEON_DB_SSLMODE
+        value: "require"
+
+  # 2) Airflow Scheduler (worker)
+  - type: worker
+    name: amdari-etl-scheduler
+    runtime: docker
+    plan: free
+    autoDeploy: true
+    dockerfilePath: ./Dockerfile
+
+    dockerCommand: /opt/airflow/render-start-scheduler.sh
+
+    envVars:
+      # Must match the web service so both can decrypt connections, etc.
+      - key: AIRFLOW__CORE__FERNET_KEY
+        sync: false          # use the SAME value as web service
+
+      # Same executor and concurrency
+      - key: AIRFLOW__CORE__PARALLELISM
+        value: "2"
+      - key: AIRFLOW__CORE__DAG_CONCURRENCY
+        value: "2"
+      - key: AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG
+        value: "1"
+      - key: AIRFLOW__CORE__EXECUTOR
+        value: "SequentialExecutor"
+
+      # Neon connection info
       - key: NEON_DB_HOST
         sync: false
       - key: NEON_DB_PORT
