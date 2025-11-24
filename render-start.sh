@@ -6,7 +6,7 @@ export AIRFLOW_HOME=/opt/airflow
 # Build SQLAlchemy connection string from Neon env vars
 export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="postgresql+psycopg2://${NEON_DB_USER}:${NEON_DB_PASSWORD}@${NEON_DB_HOST}:${NEON_DB_PORT:-5432}/${NEON_DB_NAME}?sslmode=${NEON_DB_SSLMODE:-require}"
 
-# Keep Airflow as light as possible
+# Keep Airflow as light as possible (good for free tier)
 export AIRFLOW__CORE__EXECUTOR=SequentialExecutor
 export AIRFLOW__CORE__PARALLELISM="${AIRFLOW__CORE__PARALLELISM:-2}"
 export AIRFLOW__CORE__DAG_CONCURRENCY="${AIRFLOW__CORE__DAG_CONCURRENCY:-2}"
@@ -25,7 +25,7 @@ airflow users create \
   --role Admin \
   --email admin@example.com || true
 
-# Render injects PORT; default to 10000 if not present
-PORT="${PORT:-10000}"
+# Render injects PORT; use that so Render can detect the port correctly
+PORT="${PORT:-8080}"
 echo "Starting Airflow webserver on port ${PORT}..."
 exec airflow webserver --port "${PORT}"

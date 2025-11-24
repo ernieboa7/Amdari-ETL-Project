@@ -18,5 +18,8 @@ ENV AIRFLOW_HOME=/opt/airflow
 # Install your Python deps (Airflow itself is already in the base image)
 RUN pip install --no-cache-dir -r /opt/airflow/requirements.txt
 
-# Default command: run our web-only script
-CMD ["/opt/airflow/render-start.sh"]
+# IMPORTANT: override the base entrypoint so it does NOT call `airflow` directly
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# Run our start script via bash
+CMD ["bash", "/opt/airflow/render-start.sh"]
