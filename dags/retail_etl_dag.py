@@ -1,6 +1,4 @@
-# dags/retail_etl_dag.py
 from datetime import datetime, timedelta
-import os
 from pathlib import Path
 
 from airflow import DAG
@@ -8,7 +6,6 @@ from airflow.operators.python import PythonOperator
 
 from etl.transform import transform_properties, RAW_CSV_DEFAULT, CLEAN_CSV_DEFAULT
 from etl.load import load_to_neon, verify_load, get_db_config_from_env
-
 
 # ------------- CONSTANT PATHS -----------------
 
@@ -64,11 +61,12 @@ default_args = {
     "retry_delay": timedelta(minutes=5),
 }
 
+# IMPORTANT: schedule_interval=None → manual trigger only
 with DAG(
     dag_id="retail_properties_etl",
     default_args=default_args,
     description="Retail Analytics: ETL pipeline for properties CSV into Neon Postgres",
-    schedule_interval="0 2 * * *",  # every day at 02:00
+    schedule_interval=None,          # <-- manual only
     start_date=datetime(2025, 1, 1),
     catchup=False,
     tags=["retail", "etl", "neon", "properties"],

@@ -6,8 +6,8 @@ USER root
 # Copy project into Airflow home
 COPY . /opt/airflow/
 
-# Make start scripts executable and set ownership
-RUN chmod 755 /opt/airflow/render-start-web.sh /opt/airflow/render-start-scheduler.sh \
+# Make start script executable and set ownership
+RUN chmod 755 /opt/airflow/render-start.sh \
     && chown -R airflow: /opt/airflow
 
 # Switch to airflow user (required by base image)
@@ -18,5 +18,5 @@ ENV AIRFLOW_HOME=/opt/airflow
 # Install your Python deps (Airflow itself is already in the base image)
 RUN pip install --no-cache-dir -r /opt/airflow/requirements.txt
 
-# Default command: webserver (Render overrides this anyway via dockerCommand)
-CMD ["/opt/airflow/render-start-web.sh"]
+# Default command: run our combined web+scheduler script
+CMD ["/opt/airflow/render-start.sh"]

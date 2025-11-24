@@ -1,10 +1,8 @@
-# etl/transform.py
 import os
 import re
 from pathlib import Path
 
 import pandas as pd
-
 
 # Base paths relative to project root
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -84,8 +82,7 @@ def transform_properties(
 
     # Add listing_id
     df = df.assign(
-        listing_id="MP"
-        + pd.Series(range(1, len(df) + 1)).astype(str).str.zfill(6)
+        listing_id="MP" + pd.Series(range(1, len(df) + 1)).astype(str).str.zfill(6)
     )
 
     # Reorder columns

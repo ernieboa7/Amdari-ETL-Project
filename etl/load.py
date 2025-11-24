@@ -1,5 +1,3 @@
-# etl/load.py
-
 import os
 from pathlib import Path
 
@@ -14,7 +12,7 @@ from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-# Load .env from project root (works locally and on Render)
+# Load .env from project root (works locally; on Render env comes from dashboard)
 load_dotenv(PROJECT_ROOT / ".env")
 
 CLEAN_CSV_DEFAULT = PROJECT_ROOT / "data" / "clean_properties.csv"

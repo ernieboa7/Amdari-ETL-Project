@@ -74,3 +74,4 @@ build/
 
 # Local debugging script
 local_run_etl.py
+etl/view_data.py
