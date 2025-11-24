@@ -12,13 +12,13 @@ services:
     envVars:
       # Airflow core settings
       - key: AIRFLOW__CORE__FERNET_KEY
-        sync: false              # set in Render dashboard (secret)
+        sync: false              # set secret value in Render dashboard
       - key: AIRFLOW__CORE__LOAD_EXAMPLES
         value: "False"
       - key: AIRFLOW__WEBSERVER__RBAC
         value: "True"
 
-      # Light concurrency (also defaulted in render-start.sh, but explicit here is fine)
+      # Light concurrency (also defaulted in render-start.sh)
       - key: AIRFLOW__WEBSERVER__WORKERS
         value: "1"
       - key: AIRFLOW__CORE__PARALLELISM
@@ -32,9 +32,9 @@ services:
       - key: _AIRFLOW_WWW_USER_USERNAME
         value: airflow
       - key: _AIRFLOW_WWW_USER_PASSWORD
-        sync: false              # secret in Render
+        sync: false              # set password in Render dashboard
 
-      # Neon connection info (secrets set in Render dashboard)
+      # Neon connection info (set real secrets in Render dashboard)
       - key: NEON_DB_HOST
         sync: false
       - key: NEON_DB_PORT

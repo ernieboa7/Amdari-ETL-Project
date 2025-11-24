@@ -1,4 +1,3 @@
-# Dockerfile
 FROM apache/airflow:2.10.2-python3.11
 
 # Use root only for file permissions
@@ -17,7 +16,10 @@ USER airflow
 ENV AIRFLOW_HOME=/opt/airflow
 
 # Install only your Python deps
+# (optional but leaner: remove apache-airflow from requirements.txt,
+# the base image already has it)
 RUN pip install --no-cache-dir -r /opt/airflow/requirements.txt
 
-# Default command – Render can override, but this works locally too
+# Default command – works locally; Render overrides with dockerCommand,
+# but this is safe to keep.
 CMD ["/opt/airflow/render-start.sh"]
