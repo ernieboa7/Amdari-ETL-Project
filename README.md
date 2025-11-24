@@ -112,7 +112,7 @@ Fails the DAG if mismatch occurs
 
 Ensures data quality
 
-🧪 Data Quality Checks
+ Data Quality Checks
 
 The DAG includes a verification task that:
 
