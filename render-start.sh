@@ -26,6 +26,12 @@ airflow users create \
   --email admin@example.com || true
 
 # Render injects PORT; use that so Render can detect the port correctly
-PORT="${PORT:-8080}"
+
+PORT="${PORT:-10000}"
+
 echo "Starting Airflow webserver on port ${PORT}..."
-exec airflow webserver --port "${PORT}"
+exec airflow webserver \
+  --port "${PORT}" \
+  --hostname 0.0.0.0 \
+  --access-logfile - \
+  --error-logfile -
