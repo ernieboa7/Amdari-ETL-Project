@@ -1,31 +1,23 @@
 # Dockerfile
 FROM apache/airflow:2.10.2-python3.11
 
-# 1) Use root to install OS-level dependencies and prepare files
+# Use root only for file permissions
 USER root
 
-# Install build tools (for psycopg2 and similar)
-RUN apt-get update && apt-get install -y \
-    build-essential \
-  && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Copy your whole project into /opt/airflow
+# Copy project into Airflow home
 COPY . /opt/airflow/
 
-# Make sure the start script is executable
-RUN chmod 755 /opt/airflow/render-start.sh
+# Make start script executable and set ownership
+RUN chmod 755 /opt/airflow/render-start.sh \
+    && chown -R airflow: /opt/airflow
 
-# Ensure airflow user owns the project directory
-RUN chown -R airflow: /opt/airflow
-
-# 2) Switch to airflow user for all Python / pip work (required by Airflow image)
+# Switch to airflow user (required by base image)
 USER airflow
 
-# Install Python dependencies as 'airflow' user
-RUN pip install --no-cache-dir -r /opt/airflow/requirements.txt
-
-# 3) Airflow config and default command
 ENV AIRFLOW_HOME=/opt/airflow
 
-# Default CMD – Render will override with Docker Command if needed, but this works locally too
+# Install only your Python deps
+RUN pip install --no-cache-dir -r /opt/airflow/requirements.txt
+
+# Default command – Render can override, but this works locally too
 CMD ["/opt/airflow/render-start.sh"]

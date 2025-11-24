@@ -6,28 +6,27 @@ services:
     autoDeploy: true
     dockerfilePath: ./Dockerfile
 
-    dockerCommand: >
-      set -e;
-      export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="postgresql+psycopg2://${NEON_DB_USER}:${NEON_DB_PASSWORD}@${NEON_DB_HOST}:${NEON_DB_PORT}/${NEON_DB_NAME}?sslmode=${NEON_DB_SSLMODE}";
-      airflow db migrate;
-      airflow users create \
-        --username "${_AIRFLOW_WWW_USER_USERNAME:-airflow}" \
-        --password "${_AIRFLOW_WWW_USER_PASSWORD:-airflow}" \
-        --firstname Admin \
-        --lastname User \
-        --role Admin \
-        --email admin@example.com || true;
-      airflow scheduler &
-      exec airflow webserver --port $PORT
+    # Just call your start script
+    dockerCommand: /opt/airflow/render-start.sh
 
     envVars:
       # Airflow core settings
       - key: AIRFLOW__CORE__FERNET_KEY
-        sync: false              # set in Render dashboard
+        sync: false              # set in Render dashboard (secret)
       - key: AIRFLOW__CORE__LOAD_EXAMPLES
         value: "False"
       - key: AIRFLOW__WEBSERVER__RBAC
         value: "True"
+
+      # Light concurrency (also defaulted in render-start.sh, but explicit here is fine)
+      - key: AIRFLOW__WEBSERVER__WORKERS
+        value: "1"
+      - key: AIRFLOW__CORE__PARALLELISM
+        value: "2"
+      - key: AIRFLOW__CORE__DAG_CONCURRENCY
+        value: "2"
+      - key: AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG
+        value: "1"
 
       # Web UI user credentials
       - key: _AIRFLOW_WWW_USER_USERNAME
@@ -35,7 +34,7 @@ services:
       - key: _AIRFLOW_WWW_USER_PASSWORD
         sync: false              # secret in Render
 
-      # Neon connection pieces – set actual values in Render
+      # Neon connection info (secrets set in Render dashboard)
       - key: NEON_DB_HOST
         sync: false
       - key: NEON_DB_PORT
