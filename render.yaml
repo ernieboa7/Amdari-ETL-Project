@@ -13,7 +13,7 @@ services:
       - key: AIRFLOW__CORE__LOAD_EXAMPLES
         value: "False"
 
-      # Light concurrency for free tier
+      # Light concurrency
       - key: AIRFLOW__CORE__PARALLELISM
         value: "2"
       - key: AIRFLOW__CORE__DAG_CONCURRENCY
