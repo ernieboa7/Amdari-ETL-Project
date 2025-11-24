@@ -3,11 +3,11 @@
 
 Here is a professional README tailored to your project:
 
-🏗️ Retail Analytics ETL Pipeline with Apache Airflow
+ Retail Analytics ETL Pipeline with Apache Airflow
 
 Automated Extract → Transform → Load pipeline deployed on Render, loading property sales data into Neon PostgreSQL.
 
-🚀 Overview
+ Overview
 
 This project implements a production-ready ETL pipeline for cleaning and loading property listing data into a Neon PostgreSQL cloud database.
 
