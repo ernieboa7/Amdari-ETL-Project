@@ -32,20 +32,26 @@ airflow users create \
   --role Admin \
   --email admin@example.com || true
 
-#echo "Resetting password for admin user (${ADMIN_USER})..."
-#airflow users reset-password \
-#  --username "${ADMIN_USER}" \
-#  --password "${ADMIN_PASS}" || true
+echo "Resetting password for admin user (${ADMIN_USER})..."
+airflow users reset-password \
+  --username "${ADMIN_USER}" \
+  --password "${ADMIN_PASS}" || true
 
-echo "Starting Airflow scheduler in background..."
-airflow scheduler &
+# (Optional) start the scheduler in background so DAGs actually run
+#echo "Starting Airflow scheduler in background..."
+#airflow scheduler &
 
 # Render injects PORT; use that so Render can detect the port correctly
 PORT="${PORT:-10000}"
 
-echo "Starting Airflow webserver on port ${PORT} (no debug)..."
+echo "Starting Airflow webserver in DEBUG mode on port ${PORT}..."
 exec airflow webserver \
+  --debug \
   --port "${PORT}" \
   --hostname 0.0.0.0 \
   --access-logfile - \
   --error-logfile -
+
+
+
+# remember to remove manual from the name
