@@ -77,6 +77,6 @@ local_run_etl.py
 etl/view_data.py
 
 
-# manual Dag Trigger
+# manual Dag Trigger and files for Render deployment
 render-start.sh
 Dockerfile1
