@@ -1,24 +1,23 @@
 FROM apache/airflow:2.10.2-python3.11
 
-# Use root only for file permissions
+# Switch to root for installs / file permissions
 USER root
 
-# Copy project into Airflow home
-COPY . /opt/airflow/
-
-# Make start script executable and set ownership
-RUN chmod 755 /opt/airflow/render-start.sh \
-    && chown -R airflow: /opt/airflow
-
-# Switch to airflow user (required by base image)
-USER airflow
-
-# Set Airflow home
-ENV AIRFLOW_HOME=/opt/airflow
-
-# Install your Python deps (Airflow itself is already in the base image)
+# Copy only requirements first (better cache)
+COPY requirements.txt /opt/airflow/requirements.txt
 RUN pip install --no-cache-dir -r /opt/airflow/requirements.txt
 
-# Use dumb-init as PID 1, then run our script
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["/opt/airflow/render-start.sh"]
+# Copy Airflow project
+COPY . /opt/airflow/
+
+# Copy our Railway entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh && chown -R airflow: /opt/airflow
+
+# Back to airflow user (required by the base image)
+USER airflow
+
+# Optional: you can also set some defaults here, but it's fine via env vars
+# ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
+
+ENTRYPOINT ["/entrypoint.sh"]
