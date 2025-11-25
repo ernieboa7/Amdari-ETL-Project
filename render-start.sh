@@ -37,18 +37,14 @@ airflow users reset-password \
   --username "${ADMIN_USER}" \
   --password "${ADMIN_PASS}" || true
 
-# ✅ Start the scheduler in the background so DAGs actually run
 echo "Starting Airflow scheduler in background..."
 airflow scheduler &
 
 # Render injects PORT; use that so Render can detect the port correctly
 PORT="${PORT:-10000}"
 
-
-
-echo "Starting Airflow webserver in DEBUG mode on port ${PORT}..."
+echo "Starting Airflow webserver on port ${PORT} (no debug)..."
 exec airflow webserver \
-  --debug \
   --port "${PORT}" \
   --hostname 0.0.0.0 \
   --access-logfile - \
