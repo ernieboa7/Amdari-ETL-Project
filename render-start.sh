@@ -32,14 +32,14 @@ airflow users create \
   --role Admin \
   --email admin@example.com || true
 
-#echo "Resetting password for admin user (${ADMIN_USER})..."
-#airflow users reset-password \
-#  --username "${ADMIN_USER}" \
-#  --password "${ADMIN_PASS}" || true
+echo "Resetting password for admin user (${ADMIN_USER})..."
+airflow users reset-password \
+  --username "${ADMIN_USER}" \
+  --password "${ADMIN_PASS}" || true
 
 # (Optional) start the scheduler in background so DAGs actually run
-echo "Starting Airflow scheduler in background..."
-airflow scheduler &
+#echo "Starting Airflow scheduler in background..."
+#airflow scheduler &
 
 # Render injects PORT; use that so Render can detect the port correctly
 PORT="${PORT:-10000}"
