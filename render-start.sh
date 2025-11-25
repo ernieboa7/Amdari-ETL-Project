@@ -44,9 +44,11 @@ airflow scheduler &
 # Render injects PORT; use that so Render can detect the port correctly
 PORT="${PORT:-10000}"
 
-echo "Starting Airflow webserver on port ${PORT}..."
-# Note: removed --debug to save resources
+
+
+echo "Starting Airflow webserver in DEBUG mode on port ${PORT}..."
 exec airflow webserver \
+  --debug \
   --port "${PORT}" \
   --hostname 0.0.0.0 \
   --access-logfile - \
