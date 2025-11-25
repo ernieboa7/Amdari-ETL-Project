@@ -18,7 +18,6 @@ airflow users create \
 echo "Starting scheduler..."
 airflow scheduler &
 
-# Railway gives us $PORT. If it's not set, default to 8080.
 PORT_ENV=${PORT:-8080}
 echo "Starting webserver on port ${PORT_ENV}..."
 exec airflow webserver --port "${PORT_ENV}" --hostname 0.0.0.0

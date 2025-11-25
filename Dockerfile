@@ -1,23 +1,34 @@
 FROM apache/airflow:2.10.2-python3.11
 
-# Switch to root for installs / file permissions
+# Start as root to copy files / change ownership
 USER root
 
-# Copy only requirements first (better cache)
-COPY requirements.txt /opt/airflow/requirements.txt
-RUN pip install --no-cache-dir -r /opt/airflow/requirements.txt
+# ---- Install Python dependencies as airflow user ----
+# Copy requirements (if you have any extra packages)
+COPY requirements.txt /requirements.txt
 
-# Copy Airflow project
-COPY . /opt/airflow/
+# Make airflow own the file
+RUN chown airflow: /requirements.txt
 
-# Copy our Railway entrypoint
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh && chown -R airflow: /opt/airflow
-
-# Back to airflow user (required by the base image)
+# Switch to airflow BEFORE pip install (Airflow 2.10 requirement)
 USER airflow
 
-# Optional: you can also set some defaults here, but it's fine via env vars
-# ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
+RUN pip install --no-cache-dir -r /requirements.txt
+
+# ---- Copy project code ----
+USER root
+
+# Copy your whole project into /opt/airflow
+COPY . /opt/airflow/
+
+# Make airflow own the project files
+RUN chown -R airflow: /opt/airflow
+
+# Copy our Railway entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh && chown airflow: /entrypoint.sh
+
+# Switch back to airflow to actually run Airflow
+USER airflow
 
 ENTRYPOINT ["/entrypoint.sh"]
