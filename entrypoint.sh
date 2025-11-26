@@ -1,7 +1,20 @@
 #!/usr/bin/env bash
 set -e
 
+# Default Airflow home if not set
 export AIRFLOW_HOME=${AIRFLOW_HOME:-/opt/airflow}
+
+echo "===> Applying lightweight Airflow defaults for small containers..."
+
+# These defaults keep the process count and memory footprint low.
+# Railway env vars can override any of them if you need more power later.
+export AIRFLOW__CORE__EXECUTOR="${AIRFLOW__CORE__EXECUTOR:-SequentialExecutor}"
+export AIRFLOW__CORE__PARALLELISM="${AIRFLOW__CORE__PARALLELISM:-1}"
+export AIRFLOW__CORE__DAG_CONCURRENCY="${AIRFLOW__CORE__DAG_CONCURRENCY:-1}"
+export AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG="${AIRFLOW__CORE__MAX_ACTIVE_RUNS_PER_DAG:-1}"
+export AIRFLOW__SCHEDULER__MAX_THREADS="${AIRFLOW__SCHEDULER__MAX_THREADS:-1}"
+export AIRFLOW__WEBSERVER__WORKERS="${AIRFLOW__WEBSERVER__WORKERS:-1}"
+export AIRFLOW__WEBSERVER__WEB_SERVER_WORKER_TIMEOUT="${AIRFLOW__WEBSERVER__WEB_SERVER_WORKER_TIMEOUT:-120}"
 
 echo "===> Configuring Airflow DB connection..."
 
@@ -28,9 +41,11 @@ airflow users create \
   --lastname User \
   --email admin@example.com || true
 
-echo "===> Starting scheduler..."
+# Start scheduler in background (needed even with SequentialExecutor)
+echo "===> Starting scheduler (background)..."
 airflow scheduler &
 
+# Start webserver in foreground so container stays alive
 PORT_ENV=${PORT:-8080}
 echo "===> Starting webserver on port ${PORT_ENV}..."
 exec airflow webserver --port "${PORT_ENV}" --hostname 0.0.0.0
