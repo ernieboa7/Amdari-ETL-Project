@@ -32,3 +32,4 @@ RUN chmod +x /entrypoint.sh && chown airflow: /entrypoint.sh
 USER airflow
 
 ENTRYPOINT ["/entrypoint.sh"]
+EXPOSE 8080
