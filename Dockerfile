@@ -35,11 +35,12 @@ USER root
 
 WORKDIR ${AIRFLOW_HOME}
 
-# Copy only DAGs / plugins / extra code instead of the whole repo.
-# If you don't have 'plugins' or 'src', remove those lines or create empty dirs.
+# Copy just DAGs (folder must exist in your repo)
 COPY dags/ ./dags/
-COPY plugins/ ./plugins/
-# COPY src/ ./src/       # uncomment if you have extra Python modules here
+
+# If later you add plugins or extra src code, you can uncomment these:
+# COPY plugins/ ./plugins/
+# COPY src/ ./src/
 
 # Ensure airflow owns the project files
 RUN chown -R airflow: ${AIRFLOW_HOME}
