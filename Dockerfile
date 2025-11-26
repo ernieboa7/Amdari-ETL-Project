@@ -35,8 +35,11 @@ USER root
 
 WORKDIR ${AIRFLOW_HOME}
 
-# Copy just DAGs (folder must exist in your repo)
+# Copy DAGs
 COPY dags/ ./dags/
+
+# Copy your ETL package so `from etl.transform ...` works
+COPY etl/ ./etl/
 
 # If later you add plugins or extra src code, you can uncomment these:
 # COPY plugins/ ./plugins/
