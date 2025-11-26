@@ -80,6 +80,6 @@ etl/view_data.py
 # manual Dag Trigger and files for Render deployment only
 render-start.sh
 Dockerfile1
-render.yaml
+render.yaml.txt
 
 # These are for railway deployment
