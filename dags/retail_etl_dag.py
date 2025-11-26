@@ -9,9 +9,8 @@ from etl.load import load_to_neon, verify_load, get_db_config_from_env
 
 # ------------- CONSTANT PATHS -----------------
 
-BASE_DIR = Path(__file__).resolve().parents[1]
-RAW_CSV = RAW_CSV_DEFAULT        # data/properties.csv
-CLEAN_CSV = CLEAN_CSV_DEFAULT    # data/clean_properties.csv
+RAW_CSV = RAW_CSV_DEFAULT        # e.g. Path("data/properties.csv")
+CLEAN_CSV = CLEAN_CSV_DEFAULT    # e.g. Path("data/clean_properties.csv")
 
 
 # ------------- WRAPPER FUNCTIONS FOR AIRFLOW -----------------
@@ -61,12 +60,11 @@ default_args = {
     "retry_delay": timedelta(minutes=5),
 }
 
-# IMPORTANT: schedule_interval=None → manual trigger only
 with DAG(
     dag_id="retail_properties_etl",
     default_args=default_args,
     description="Retail Analytics: ETL pipeline for properties CSV into Neon Postgres",
-    schedule_interval=None,          # <-- manual only
+    schedule_interval=None,          # <-- manual only; change to '@daily' if you want a schedule
     start_date=datetime(2025, 1, 1),
     catchup=False,
     tags=["retail", "etl", "neon", "properties"],
