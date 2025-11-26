@@ -42,8 +42,9 @@ airflow users create \
   --email admin@example.com || true
 
 # Start scheduler in background (needed even with SequentialExecutor)
-echo "===> Starting scheduler (background)..."
-airflow scheduler &
+echo "===> Scheduler temporarily disabled for debugging..."
+#echo "===> Starting scheduler (background)..."
+#airflow scheduler &
 
 # Start webserver in foreground so container stays alive
 PORT_ENV=${PORT:-8080}
