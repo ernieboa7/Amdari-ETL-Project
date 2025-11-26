@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-# Load .env from project root (works locally; on Render env comes from dashboard)
+# Load .env from project root for local dev; on Railway, env comes from service vars
 load_dotenv(PROJECT_ROOT / ".env")
 
 CLEAN_CSV_DEFAULT = PROJECT_ROOT / "data" / "clean_properties.csv"
@@ -171,10 +171,6 @@ def verify_load(
     Compares:
     - number of rows in the clean CSV *that have a listing_id*
     - number of rows currently in the 'properties' table *for those listing_ids*
-
-    Raises:
-        ValueError if the database count for this batch's listing_ids
-        is less than the CSV count for listing_ids.
     """
     clean_csv_path = Path(clean_csv_path)
 

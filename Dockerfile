@@ -8,6 +8,7 @@ ENV PYTHONPATH="/opt/airflow:${PYTHONPATH}"
 USER root
 
 # ---- Install Python dependencies as airflow user ----
+
 # Copy requirements (if you have any extra packages)
 COPY requirements.txt /requirements.txt
 

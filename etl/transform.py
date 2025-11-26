@@ -1,4 +1,3 @@
-import os
 import re
 from pathlib import Path
 
@@ -105,7 +104,6 @@ def transform_properties(
     df.to_csv(clean_csv_path, index=False)
 
     print("\nCLEAN & TRANSFORMED DATA")
-    #print(df.to_string(index=False))
     print(df.to_string(index=False))
     print(f"\nClean data saved to {clean_csv_path}")
     print("Ready for PostgreSQL load!")
