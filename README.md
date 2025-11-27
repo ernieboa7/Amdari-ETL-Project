@@ -38,7 +38,10 @@ your-etl-project/
 │   └── load.py
 │
 ├── data/
-│   └── properties.csv
+│   ├── properties.csv
+│   └── clean_properties.csv
+
+
 
 ⚙️ Environment Variables
 

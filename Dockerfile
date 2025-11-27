@@ -45,6 +45,8 @@ COPY etl/ ./etl/
 # COPY plugins/ ./plugins/
 # COPY src/ ./src/
 
+COPY data/ ./data/   
+
 # Ensure airflow owns the project files
 RUN chown -R airflow: ${AIRFLOW_HOME}
 
