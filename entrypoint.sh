@@ -53,6 +53,11 @@ case "$AIRFLOW_ROLE" in
     ;;
 
   scheduler)
+    echo "===> Starting tiny HTTP health server on port 8080 for Railway..."
+    # This built-in HTTP server will respond 200 OK for /health (and any path),
+    # satisfying Railway's healthcheck while the scheduler runs.
+    python -m http.server 8080 --bind 0.0.0.0 >/dev/null 2>&1 &
+
     echo "===> Starting scheduler..."
     exec airflow scheduler
     ;;
