@@ -46,6 +46,7 @@ logs/*
 # (KEEP raw properties.csv under version control)
 # -----------------------------
 data/clean_properties.csv
+data/properties.csv
 data/*.tmp
 data/*.bak
 
