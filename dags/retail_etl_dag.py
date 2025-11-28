@@ -1,15 +1,15 @@
+# dags/retail_properties_etl.py
+
 from datetime import datetime, timedelta
-from pathlib import Path
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 
-from etl.transform import transform_properties, RAW_CSV_DEFAULT, CLEAN_CSV_DEFAULT
+from etl.transform import transform_properties, CLEAN_CSV_DEFAULT
 from etl.load import load_to_neon, verify_load, get_db_config_from_env
 
 # ------------- CONSTANT PATHS -----------------
 
-RAW_CSV = RAW_CSV_DEFAULT        # e.g. Path("data/properties.csv")
 CLEAN_CSV = CLEAN_CSV_DEFAULT    # e.g. Path("data/clean_properties.csv")
 
 
@@ -17,19 +17,27 @@ CLEAN_CSV = CLEAN_CSV_DEFAULT    # e.g. Path("data/clean_properties.csv")
 
 def extract_raw_properties(**context):
     """
-    Simple extract step: ensure the raw CSV exists.
-    This could later be extended to download from S3 or another source.
+    Extract step placeholder for API-based pipeline.
+    For now we just validate that the API key exists.
     """
-    if not RAW_CSV.exists():
-        raise FileNotFoundError(f"Raw CSV not found at {RAW_CSV}")
-    print(f"Extract step OK - file present: {RAW_CSV}")
+    import os
+
+    api_key = os.getenv("RENTCAST_API_KEY")
+    if not api_key:
+        raise RuntimeError(
+            "RENTCAST_API_KEY is not set. "
+            "Please configure it in your environment (.env / Railway / Airflow)."
+        )
+
+    print("Extract step OK - API key found; data will be fetched in transform step.")
 
 
 def transform_task_callable(**context):
     """
     Airflow-compatible wrapper to call transform_properties().
+    Fetches from API, transforms in memory, and writes clean CSV.
     """
-    rows = transform_properties(raw_csv_path=RAW_CSV, clean_csv_path=CLEAN_CSV)
+    rows = transform_properties(clean_csv_path=CLEAN_CSV, save_clean_csv=True)
     print(f"Transform step completed with {rows} cleaned rows.")
 
 
@@ -63,8 +71,8 @@ default_args = {
 with DAG(
     dag_id="retail_properties_etl",
     default_args=default_args,
-    description="Retail Analytics: ETL pipeline for properties CSV into Neon Postgres",
-    schedule_interval=None,          # <-- manual only; change to '@daily' if you want a schedule
+    description="Retail Analytics: ETL pipeline for properties API into Neon Postgres",
+    schedule_interval=None,          # <--None for manual only; change to '@daily' if you want a schedule
     start_date=datetime(2025, 1, 1),
     catchup=False,
     tags=["retail", "etl", "neon", "properties"],
