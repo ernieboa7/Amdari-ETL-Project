@@ -161,6 +161,7 @@ def load_to_neon(
 # VERIFY STEP
 # --------------------------------------------------------------------
 
+
 def verify_load(
     clean_csv_path: str | os.PathLike = CLEAN_CSV_DEFAULT,
     db_config: dict | None = None,
@@ -189,8 +190,14 @@ def verify_load(
     expected_rows = len(df)
     print(f"Clean CSV has {expected_rows} row(s) with a listing_id.")
 
+    # ------- UPDATED LOGIC (no failure if empty batch) -------
     if expected_rows == 0:
-        raise ValueError("No rows with listing_id found in clean CSV; nothing to verify.")
+        print(
+            "No rows with listing_id found in clean CSV; "
+            "skipping DB verification for this run."
+        )
+        return
+    # ---------------------------------------------------------
 
     listing_ids = list(df["listing_id"])
 
