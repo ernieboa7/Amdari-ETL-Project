@@ -72,7 +72,7 @@ with DAG(
     dag_id="retail_properties_etl",
     default_args=default_args,
     description="Retail Analytics: ETL pipeline for properties API into Neon Postgres",
-    schedule_interval=None,          # <--None for manual only; change to '@daily' if you want a schedule
+    schedule_interval='@weekly',          # <--None for manual only; change to '@daily' if you want a schedule
     start_date=datetime(2025, 1, 1),
     catchup=False,
     tags=["retail", "etl", "neon", "properties"],
