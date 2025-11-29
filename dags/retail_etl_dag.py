@@ -69,32 +69,32 @@ default_args = {
 }
 
 with DAG(
-    dag_id="retail_properties_etl",
+    dag_id="ETL",
     default_args=default_args,
     description="Retail Analytics: ETL pipeline for properties API into Neon Postgres",
     schedule_interval=None,          # <--None for manual only; change to '@daily' if you want a schedule
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    tags=["retail", "etl", "neon", "properties"],
+    tags=["Retail", "ETL", "Neon", "Properties"],
 ) as dag:
 
     extract_task = PythonOperator(
-        task_id="extract_raw_properties",
+        task_id="Extract_Raw_Data",
         python_callable=extract_raw_properties,
     )
 
     transform_task = PythonOperator(
-        task_id="transform_properties",
+        task_id="Transform_Data",
         python_callable=transform_task_callable,
     )
 
     load_task = PythonOperator(
-        task_id="load_to_neon",
+        task_id="Load_To_Database",
         python_callable=load_task_callable,
     )
 
     verify_task = PythonOperator(
-        task_id="verify_load_success",
+        task_id="Verify_Load_Success",
         python_callable=verify_task_callable,
     )
 
