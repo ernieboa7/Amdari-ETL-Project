@@ -16,10 +16,9 @@ CLEAN_CSV = CLEAN_CSV_DEFAULT    # e.g. Path("data/clean_properties.csv")
 # ------------- WRAPPER FUNCTIONS FOR AIRFLOW -----------------
 
 def extract_raw_properties(**context):
-    """
-    Extract step placeholder for API-based pipeline.
-    For now we just validate that the API key exists.
-    """
+    
+    #Extract step placeholder for API-based pipeline.
+    
     import os
 
     api_key = os.getenv("RENTCAST_API_KEY")

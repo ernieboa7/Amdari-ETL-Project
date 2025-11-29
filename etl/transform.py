@@ -6,11 +6,11 @@ from pathlib import Path
 
 import pandas as pd
 import requests
-from dotenv import load_dotenv  # <-- ADD THIS
+from dotenv import load_dotenv  
 
 # Load .env for local dev; in Docker/Railway this will do nothing
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-load_dotenv(PROJECT_ROOT / ".env")  # <-- ADD THIS
+load_dotenv(PROJECT_ROOT / ".env")  
 
 # --------------------
 # Config / constants
@@ -19,7 +19,7 @@ API_LIMIT = 40
 api_count = 0
 
 # Read from environment (.env / Docker / Airflow)
-RENTCAST_URL = os.getenv("RENTCAST_URL", "https://api.rentcast.io/v1/properties/random")
+RENTCAST_URL = os.getenv("RENTCAST_URL")
 RENTCAST_API_KEY = os.getenv("RENTCAST_API_KEY")
 
 # Base paths relative to project root
@@ -120,10 +120,9 @@ def transform_properties(
     clean_csv_path = Path(clean_csv_path)
 
     # 1) EXTRACT directly from API (ignores raw_csv_path)
-    raw_df = _fetch_from_api(max_rows=20)
+    raw_df = _fetch_from_api(max_rows=30)
 
     # 2) Map API JSON keys -> original CSV schema
-    # Based on /v1/properties/random sample payload you provided
     mapping: dict[str, str] = {
         "addressLine1": "Address",
         "city": "City",

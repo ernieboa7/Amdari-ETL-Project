@@ -85,7 +85,7 @@ def load_to_neon(
     # Make sure listing_id is string (matches VARCHAR PK)
     df["listing_id"] = df["listing_id"].astype(str)
 
-    print("Connecting to PostgreSQL (Neon)...")
+    print("Connecting to PostgreSQL ...")
     try:
         conn = psycopg2.connect(**db_config)
         cur = conn.cursor()
