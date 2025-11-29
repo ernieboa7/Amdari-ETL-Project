@@ -54,6 +54,14 @@ RUN chown -R airflow: ${AIRFLOW_HOME}
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh && chown airflow: /entrypoint.sh
 
+
+
+#  Airflow UI Styling (only 3 lines!)
+# Copy your custom CSS file into the image
+COPY airflow_theme/custom_styles.css /tmp/custom_styles.css
+# Append it into Airflow's main stylesheet (no template changes)
+RUN cat /tmp/custom_styles.css >> /usr/local/lib/python3.11/site-packages/airflow/www/static/css/main.css || true
+
 # Switch back to airflow to actually run Airflow
 USER airflow
 

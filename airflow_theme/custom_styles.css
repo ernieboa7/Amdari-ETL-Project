@@ -1,0 +1,19 @@
+body {
+    font-family: "Segoe UI", sans-serif;
+}
+
+.navbar.navbar-inverse {
+    background-color: #0b3c5d !important;
+    border-color: #06263a !important;
+}
+
+.card {
+    border-radius: 12px !important;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.15) !important;
+}
+
+.dag-card-title, .dag-name {
+    font-size: 18px !important;
+    font-weight: 600;
+    color: #0b3c5d !important;
+}
