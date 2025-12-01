@@ -28,10 +28,10 @@ def get_db_config_from_env() -> dict:
     Raises if required variables are missing.
     """
     required_vars = [
-        "NEON_DB_HOST",
-        "NEON_DB_NAME",
-        "NEON_DB_USER",
-        "NEON_DB_PASSWORD",
+        "DB_HOST",
+        "DB_NAME",
+        "DB_USER",
+        "DB_PASSWORD",
     ]
 
     missing = [var for var in required_vars if not os.getenv(var)]
@@ -39,12 +39,12 @@ def get_db_config_from_env() -> dict:
         raise RuntimeError(f"Missing required env vars: {missing}")
 
     return {
-        "host": os.getenv("NEON_DB_HOST"),
-        "dbname": os.getenv("NEON_DB_NAME"),
-        "port": os.getenv("NEON_DB_PORT", "5432"),
-        "user": os.getenv("NEON_DB_USER"),
-        "password": os.getenv("NEON_DB_PASSWORD"),
-        "sslmode": os.getenv("NEON_DB_SSLMODE", "require"),
+        "host": os.getenv("DB_HOST"),
+        "dbname": os.getenv("DB_NAME"),
+        "port": os.getenv("DB_PORT", "5432"),
+        "user": os.getenv("DB_USER"),
+        "password": os.getenv("DB_PASSWORD"),
+        "sslmode": os.getenv("DB_SSLMODE", "disable"),
     }
 
 
@@ -52,12 +52,12 @@ def get_db_config_from_env() -> dict:
 # LOAD STEP
 # --------------------------------------------------------------------
 
-def load_to_neon(
+def load_to_database(
     clean_csv_path: str | os.PathLike = CLEAN_CSV_DEFAULT,
     db_config: dict | None = None,
 ) -> int:
     """
-    Load the cleaned CSV into the Neon Postgres 'properties' table using upsert.
+    Load the cleaned CSV into the Postgres 'properties' table using upsert.
 
     Returns:
         int: Number of rows attempted to load.

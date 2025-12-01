@@ -6,7 +6,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 
 from etl.transform import transform_properties, CLEAN_CSV_DEFAULT
-from etl.load import load_to_neon, verify_load, get_db_config_from_env
+from etl.load import load_to_database, verify_load, get_db_config_from_env
 
 # ------------- CONSTANT PATHS -----------------
 
@@ -45,7 +45,7 @@ def load_task_callable(**context):
     Airflow-compatible wrapper to call load_to_neon().
     """
     db_config = get_db_config_from_env()
-    loaded_rows = load_to_neon(clean_csv_path=CLEAN_CSV, db_config=db_config)
+    loaded_rows = load_to_database(clean_csv_path=CLEAN_CSV, db_config=db_config)
     print(f"Load step completed. Attempted to load {loaded_rows} rows.")
 
 
@@ -70,7 +70,7 @@ default_args = {
 with DAG(
     dag_id="ETL",
     default_args=default_args,
-    description="Retail Analytics: ETL pipeline for properties API into Neon Postgres",
+    description="Retail Analytics: ETL pipeline for properties API into Postgres",
     schedule_interval=None,          # <--None for manual only; change to '@daily' if you want a schedule
     start_date=datetime(2025, 1, 1),
     catchup=False,
