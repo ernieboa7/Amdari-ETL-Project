@@ -74,7 +74,7 @@ with DAG(
     schedule_interval=None,          # <--None for manual only; change to '@daily' if you want a schedule
     start_date=datetime(2025, 1, 1),
     catchup=False,
-    tags=["Retail", "ETL", "Neon", "Properties"],
+    tags=["Retail", "ETL", "PogresQSL", "Properties"],
 ) as dag:
 
     extract_task = PythonOperator(
