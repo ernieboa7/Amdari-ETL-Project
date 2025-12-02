@@ -232,7 +232,7 @@ def transform_properties(
     print("\nCLEAN & TRANSFORMED DATA (max 20 rows):")
     print(df.to_string(index=False))
 
-    # Optional: save cleaned CSV for load.py
+    # Save cleaned CSV for load.py
     if save_clean_csv:
         clean_csv_path.parent.mkdir(parents=True, exist_ok=True)
         df.to_csv(clean_csv_path, index=False)
