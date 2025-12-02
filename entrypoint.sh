@@ -16,12 +16,12 @@ export AIRFLOW__WEBSERVER__WEB_SERVER_WORKER_TIMEOUT="${AIRFLOW__WEBSERVER__WEB_
 AIRFLOW_ROLE="${AIRFLOW_ROLE:-webserver}"
 echo "ROLE: $AIRFLOW_ROLE"
 
-# Configure DB (Neon)
-if [[ -n "$NEON_DB_HOST" ]]; then
-  : "${NEON_DB_PORT:=5432}"
-  : "${NEON_DB_SSLMODE:=require}"
-  export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="postgresql+psycopg2://${NEON_DB_USER}:${NEON_DB_PASSWORD}@${NEON_DB_HOST}:${NEON_DB_PORT}/${NEON_DB_NAME}?sslmode=${NEON_DB_SSLMODE}"
-  echo "Using Neon Postgres DB"
+# Configure DB 
+if [[ -n "$DB_HOST" ]]; then
+  : "${DB_PORT:=5432}"
+  : "${DB_SSLMODE:=require}"
+  export AIRFLOW__DATABASE__SQL_ALCHEMY_CONN="postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}"
+  echo "Using Postgres DB"
 fi
 
 echo "===> Upgrading DB..."
