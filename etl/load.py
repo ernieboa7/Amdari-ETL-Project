@@ -201,7 +201,7 @@ def verify_load(
 
     listing_ids = list(df["listing_id"])
 
-    print("Connecting to PostgreSQL (Neon) for verification...")
+    print("Connecting to PostgreSQL for verification...")
     conn = psycopg2.connect(**db_config)
     cur = conn.cursor()
 

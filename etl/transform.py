@@ -23,8 +23,7 @@ RENTCAST_API_KEY = os.getenv("RENTCAST_API_KEY")
 # Base paths relative to project root
 BASE_DIR = Path(__file__).resolve().parents[1]
 
-# Kept for backwards compatibility, even if not used anymore
-RAW_CSV_DEFAULT = BASE_DIR / "data" / "properties.csv"
+# Default path for cleaned CSV output
 CLEAN_CSV_DEFAULT = BASE_DIR / "data" / "clean_properties.csv"
 
 
@@ -60,7 +59,7 @@ def _get_random_properties(limit: int = 5):
 def _fetch_from_api(max_rows: int = 20) -> pd.DataFrame:
     """
     Fetch up to `max_rows` properties from the API
-    and return them as a DataFrame (no raw CSV).
+    and return them as a DataFrame.
     """
     rows: list[dict] = []
 
@@ -87,12 +86,11 @@ def _fetch_from_api(max_rows: int = 20) -> pd.DataFrame:
 # Transform (NO Postgres load here)
 # --------------------------------------------------
 def transform_properties(
-    raw_csv_path: str | os.PathLike | None = None,   # kept for Airflow compatibility, unused
     clean_csv_path: str | os.PathLike = CLEAN_CSV_DEFAULT,
     save_clean_csv: bool = True,
 ) -> int:
     """
-    Fetch raw data from API, clean and transform it,
+    Fetch raw data from the API, clean and transform it,
     and optionally save the cleaned result to clean_csv_path.
 
     - Does NOT load to Postgres (that's handled in load.py).
@@ -102,7 +100,7 @@ def transform_properties(
 
     clean_csv_path = Path(clean_csv_path)
 
-    # 1) EXTRACT directly from API (ignores raw_csv_path)
+    # 1) EXTRACT directly from API
     raw_df = _fetch_from_api(max_rows=30)
 
     # 2) Map API JSON keys -> original CSV schema
@@ -178,7 +176,7 @@ def transform_properties(
     df["sqft"] = pd.to_numeric(df["sqft"], errors="coerce")
 
     print(f"Before dropping NA price/sqft: {len(df)} rows")
-    df = df.dropna(subset=["price", "sqft"])    
+    df = df.dropna(subset=["price", "sqft"])
     print(f"After dropping NA price/sqft: {len(df)} rows")
 
     df["price"] = df["price"].astype(int)
