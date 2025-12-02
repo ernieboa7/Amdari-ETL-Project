@@ -15,8 +15,6 @@ load_dotenv(PROJECT_ROOT / ".env")
 # --------------------
 # Config / constants
 # --------------------
-API_LIMIT = 40
-api_count = 0
 
 # Read from environment (.env / Docker / Airflow)
 RENTCAST_URL = os.getenv("RENTCAST_URL")
@@ -36,14 +34,8 @@ CLEAN_CSV_DEFAULT = BASE_DIR / "data" / "clean_properties.csv"
 def _get_random_properties(limit: int = 5):
     """
     Call the RentCast random properties endpoint once.
-    Respects the global API_LIMIT.
     Returns: list[dict] or None.
     """
-    global api_count
-
-    if api_count >= API_LIMIT:
-        print(f"API request limit reached ({API_LIMIT}). No more requests will be made.")
-        return None
 
     if not RENTCAST_API_KEY:
         raise RuntimeError(
@@ -59,8 +51,7 @@ def _get_random_properties(limit: int = 5):
     params = {"limit": limit}
 
     response = requests.get(RENTCAST_URL, headers=headers, params=params, timeout=10)
-    api_count += 1
-    print(f"API Request {api_count}/{API_LIMIT}")
+    print("API request made to RentCast")
 
     response.raise_for_status()
     return response.json()  # expect list of property dicts
@@ -70,7 +61,6 @@ def _fetch_from_api(max_rows: int = 20) -> pd.DataFrame:
     """
     Fetch up to `max_rows` properties from the API
     and return them as a DataFrame (no raw CSV).
-    Ensures: <=20 rows and <=20 columns.
     """
     rows: list[dict] = []
 
@@ -80,7 +70,7 @@ def _fetch_from_api(max_rows: int = 20) -> pd.DataFrame:
         data = _get_random_properties(limit=batch_limit)
 
         if not data:
-            break  # API limit reached or no data
+            break  # no data returned
 
         rows.extend(data)
 
@@ -88,13 +78,6 @@ def _fetch_from_api(max_rows: int = 20) -> pd.DataFrame:
         raise RuntimeError("No data fetched from API; cannot transform.")
 
     df = pd.DataFrame(rows)
-
-    # Hard cap columns (safety)
-    if df.shape[1] > 20:
-        df = df.iloc[:, :20]
-
-    # Hard cap rows
-    df = df.head(max_rows)
 
     print(f"Fetched {len(df)} rows from API with {df.shape[1]} columns.")
     return df
@@ -213,7 +196,6 @@ def transform_properties(
         "MP" + (df.index + 1).astype(str).str.zfill(6)
     )
 
-
     # Reorder columns
     df = df[
         [
@@ -229,7 +211,7 @@ def transform_properties(
         ]
     ]
 
-    print("\nCLEAN & TRANSFORMED DATA (max 20 rows):")
+    print("\nCLEAN & TRANSFORMED DATA:")
     print(df.to_string(index=False))
 
     # Save cleaned CSV for load.py
