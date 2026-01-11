@@ -84,3 +84,10 @@ Dockerfile1
 render.yaml.txt
 
 # These are for railway deployment
+
+
+mock-property-data/
+
+properties_200.csv
+
+properties_200.json
