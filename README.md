@@ -108,9 +108,7 @@ Loaded into Neon PostgreSQL
 4. Verify
 
 Compares DB row count vs cleaned CSV row count
-
 Fails the DAG if mismatch occurs
-
 Ensures data quality
 
  Data Quality Checks
