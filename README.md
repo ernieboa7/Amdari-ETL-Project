@@ -83,9 +83,7 @@ Trigger the DAG: retail_properties_etl
 🔄 ETL Workflow
 1. Extract
 
-Ensures raw properties.csv exists
-
-Located in data/ folder
+Extract Raw Property data using API
 
 2. Transform
 
